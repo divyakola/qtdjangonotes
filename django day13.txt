@@ -1,0 +1,220 @@
+ex:
+---
+create a django project to insert the data and retreive the data from the database?
+
+step1:
+-----
+to create a project
+
+C:\django7am>myvenv\scripts\activate
+
+(myvenv) C:\django7am>django-admin startproject proj17
+
+step2:
+-----
+goto project location and to create an application inside our project
+
+(myvenv) C:\django7am>cd proj17
+
+(myvenv) C:\django7am\proj17>python manage.py startapp app17
+
+step3:
+-----
+to install our application in the setings.py file of the project
+
+	settings.py
+	-----------
+INSTALLED_APPS = [
+
+      'app17'
+]
+
+step4:
+-----
+to configure the database settings in the settings.py file of the project.
+
+	settings.py
+	-----------
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+step5:
+-----
+to define a models in the models.py file of the application
+
+	models.py
+	---------
+from django.db import models
+
+# Create your models here.
+class Student(models.Model):
+    sid=models.IntegerField(primary_key=True)
+    sname=models.CharField(max_length=20)
+    sadd=models.CharField(max_length=30)
+    sfee=models.DecimalField(max_digits=6,decimal_places=2)
+    sstatus=models.BooleanField(default=False)
+    
+step6:
+-----
+to check the errors in our model
+
+(myvenv) C:\django7am\proj17>python manage.py check
+
+step7:
+----
+to create a models(to generate the sql query for our model)
+
+(myvenv) C:\django7am\proj17>python manage.py makemigrations
+
+step8:
+-----
+to create a tables(to apply the migrations)
+
+(myvenv) C:\django7am\proj17>python manage.py migrate
+
+step9:
+-----
+to create a views in the views.py file
+
+	views.py
+	--------
+from django.shortcuts import render
+from .models import Student
+# Create your views here.
+def input(request):
+    return render(request,'input.html')
+def insertion(request):
+    id=int(request.GET['id'])
+    name=request.GET['name']
+    add=request.GET['add']
+    fee=float(request.GET['fee'])
+    status=bool(request.GET['status'])
+    s=Student(sid=id,sname=name,sadd=add,sfee=fee,sstatus=status)
+    s.save()
+    return render(request,'result.html')
+def retrieve(request):
+    data=Student.objects.all()
+    return render(request,'display.html',{'records':data})
+
+	input.html
+	----------
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body bgcolor="powderblue">
+<form action="insert">
+Enter Student id:
+<input type="text" name="id"><br><br>
+Enter Student name:
+<input type="text" name="name"><br><br>
+Enter Student address:
+<input type="text" name="add"><br><br>
+Enter Student fee:
+<input type="text" name="fee"><br><br>
+Enter Student status:
+<input type="text" name="status"><br><br>
+<input type="submit" value="add">
+</form>
+</body>
+</html>
+
+	result.html
+	----------
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body bgcolor="yellow">
+<h2>successfully inserted</h2>
+
+</body>
+</html>
+
+	display.html
+	------------
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body bgcolor="orange">
+<table border="5">
+<tr>
+<th>Sid</th>
+<th>Sname</th>
+<th>Sadd</th>
+<th>Sfee</th>
+<th>Sstatus</th>
+<tr>
+{% for rec in records %}
+<tr>
+   <td>{{rec.sid}}</td>
+   <td>{{rec.sname}}</td>
+   <td>{{rec.sadd}}</td>
+   <td>{{rec.sfee}}</td>
+   <td>{{rec.sstatus}}</td>
+</tr>
+{% endfor %}
+</table>
+<br>
+</body>
+</html>
+
+step10:
+-------
+to configure the url patterns for our views in the urls.py file.
+
+	app17/urls.py
+	--------------
+from django.urls import path,re_path
+from app17 import views
+
+urlpatterns=[
+    path('in/',views.input),
+    re_path('insert',views.insertion),
+    re_path('display',views.retrieve)
+    ]
+
+	proj17/urls.py
+	-------------
+from django.contrib import admin
+from django.urls import path,include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('',include("app17.urls"))
+]
+
+step11:
+------
+to start the server
+
+	(myvenv) C:\django7am\proj17>python manage.py runserver
+
+step12:
+------
+to send the request to the server
+
+	http://127.0.0.1:8000/in
+	http://127.0.0.1:8000/display
+
+structure:
+---------
+	proj17
+	   |--->app17
+	   |      |--->views.py
+	   |      |--->urls.py
+	   |      |--->models.py
+	   |--->proj17
+	   |      |--->settings.py
+	   |      |--->urls.py
+	   |--->templates
+	   |      |--->input.html
+	   |      |--->result.html
+           |      |--->display.html
+	   |--->manage.py
+

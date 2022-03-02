@@ -1,0 +1,342 @@
+ex:
+---
+create a django project with template tags?
+
+step1:
+-----
+to create a project
+
+C:\django7am>myvenv\scripts\activate
+
+(myvenv) C:\django7am>django-admin startproject proj14
+
+step2:
+----
+goto project location and to create an application in the project location.
+
+(myvenv) C:\django7am>cd proj14
+
+(myvenv) C:\django7am\proj14>python manage.py startapp app14
+
+step3:
+-----
+to install our application in the settings.py file of the project.
+
+	settings.py
+	-----------
+INSTALLED_APPS = [
+    
+    'app14'
+]
+
+step4:
+------
+create a templates and to set the path for our templates in the settings.py file of the project.
+
+	settings.py
+	-----------
+TEMPLATES = [
+    {
+       
+        'DIRS': [BASE_DIR/'templates'],        
+    },
+]
+
+step5:
+-----
+to create a views in the views.py file of the application
+
+	views.py
+	--------
+from django.shortcuts import render
+from datetime import datetime
+# Create your views here.
+def welcome(request):
+    employes=[{'eid':101,'ename':'siva','sal':2000},
+              {'eid':102,'ename':'rama','sal':4000},
+              {'eid':103,'ename':'krishna','sal':3000}
+              ]
+    cdt=datetime.now()
+    context={'emp':employes,'now':cdt}
+    return render(request,'display.html',context)
+              
+	display.html
+	------------
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body bgcolor="powderblue">
+{# for loops representation in templates #}
+{% for rec in emp %}
+   {{ rec }}<br>
+{% endfor %}
+<hr>
+{% for rec in emp|dictsort:'ename' %}
+   {{ rec }}<br>
+{% endfor %}
+<hr>
+{% for rec in emp %}
+   {{ rec|upper }}<br>
+{% endfor %}
+<hr>
+{% comment %}
+represent the conditional statements in templates
+like if
+     elif
+     else
+{% endcomment %}
+{% if now.day >= 1 and now.day <= 7 %}
+    <h2>we are in first week of this month</h2>
+{% elif now.day >= 8 and now.day <= 14 %}
+    <h2>we are in second week of this month</h2>
+{% elif now.day >= 15 and now.day <= 21 %}
+    <h2>we are in third week of this month</h2>
+{% elif now.day >= 22 and now.day <= 28 %}
+    <h2>we are in fourth week of this month</h2>
+{% else %}
+    <h2>we are in fifth week of this month</h2>
+{% endif %}
+</body>
+</html>
+
+step6:
+-------
+to configure the url patterns for our views in the urls.py file of the project.
+
+	urls.py
+	------
+from django.contrib import admin
+from django.urls import path
+from app14 import views
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('wel/',views.welcome)
+]
+
+step7:
+-----
+to apply the migrations
+
+	python manage.py migrate
+
+step8:
+------
+to start the server
+
+	python manage.py runserver
+
+step9:
+-----
+to send the request to the server
+
+	http://127.0.0.1:8000/wel
+
+structure:
+----------
+	proj14
+	   |--->app14
+	   |      |--->views.py
+	   |--->proj14
+	   |      |--->settings.py
+	   |      |--->urls.py
+	   |--->templates
+	   |      |--->display.html
+	   |--->manage.py
+
+
+ex:
+---
+create a django project to implement template inhertance concept?
+	
+	we can implement the template inheritance i.e., to achive the html code reusability by using include and extends tags.
+
+
+step1:
+-----
+to create a project
+
+C:\django7am>myvenv\scripts\activate
+
+(myvenv) C:\django7am>django-admin startproject proj15
+
+step2:
+----
+goto project location and to create an application in the project location.
+
+(myvenv) C:\django7am>cd proj15
+
+(myvenv) C:\django7am\proj15>python manage.py startapp app15
+
+step3:
+-----
+to install our application in the settings.py file of the project.
+
+	settings.py
+	-----------
+INSTALLED_APPS = [
+    
+    'app15'
+]
+
+step4:
+------
+create a templates and to set the path for our templates in the settings.py file of the project.
+
+	settings.py
+	-----------
+TEMPLATES = [
+    {
+       
+        'DIRS': [BASE_DIR/'templates'],        
+    },
+]
+
+step5:
+-----
+to create a views in the views.py file of the application
+
+	views.py
+	--------
+from django.shortcuts import render
+
+# Create your views here.
+def welcome(request):
+    return render(request,'demo.html')
+
+def wishes(request):
+    return render(request,'test.html')
+
+def message(request):
+    return render(request,'sample.html')
+
+
+	demo.html
+	---------
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+{% include 'base.html' %}
+<h2>this is Guido Van Rossum</h2>
+</body>
+</html>
+
+
+	test.html
+	---------
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+{% include 'base.html' %}
+<h2>this is siva krishna</h2>
+</body>
+</html>
+	
+
+	base.html
+	---------
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body bgcolor="red">
+<h1 style="text-align:center;font-style:italic;font-family:elephant">welcome to Quality Thought</h1>
+</body>
+</html>
+
+
+
+	sample.html
+	-----------
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+{% extends 'welcome.html' %}
+{% block content %}
+<h1 style="text-align:center;font-style:italic">
+welcome to quality thought
+</h1>
+{% endblock %}
+</body>
+</html>
+
+
+
+	welcome.html
+	------------
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body bgcolor="powderblue">
+<h1 style="color:red;font-family:elephant">
+hello siva good morning
+</h1>
+{% block content %}
+{% endblock %}
+</body>
+</html>
+
+step6:
+-----
+to configure the url patterns for our views in the urls.py file of the project.
+
+	urls.py
+	-------
+from django.contrib import admin
+from django.urls import path
+from app15 import views
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('wel/',views.welcome),
+    path('greetings/',views.wishes),
+    path('msg/',views.message)
+]
+
+step7:
+-----
+to apply the migrations
+
+	python manage.py migrate
+
+step8:
+-----
+to start the server
+
+	python manage.py runserver
+
+step9:
+-----
+to send the request to the server
+
+	http://127.0.0.1:8000/wel
+	http://127.0.0.1:8000/greetings
+	http://127.0.0.1:8000/msg
+
+structure:
+----------
+	proj15
+	  |--->app15
+	  |      |--->views.py
+	  |--->proj15
+	  |      |--->settings.py
+	  |      |--->urls.py
+	  |--->templates
+	  |      |--->demo.html
+	  |      |--->test.html
+	  |      |--->base.html
+          |      |--->sample.html
+          |      |--->welcome.html
+          |--->manage.py
+
+
+
+	

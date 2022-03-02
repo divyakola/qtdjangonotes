@@ -1,0 +1,375 @@
+how to get the no.of objects?(to get the no.of records)
+-----------------------------
+	we can get the no.of records by using count() of objects manager.
+
+
+(myvenv) C:\django7am\proj16>python manage.py shell
+Python 3.10.1 (InteractiveConsole)
+
+>>> from app16.models import emp
+>>> emp.objects.count()
+7
+
+
+how to ordering the objects?
+-----------------------------
+	we can get the records in ascending or descending order by uisng order_by() of objects manager.
+
+	order_by('attribute') 	#ascending order
+
+	order_by('-attribute')  #descending order
+
+
+(myvenv) C:\django7am\proj16>python manage.py shell
+Python 3.10.1 
+(InteractiveConsole)
+
+>>> from app16.models import emp
+>>> records=emp.objects.all()
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+101 siva hyd 2000.00 siva@gmail.com True
+102 rama pune 3000.00  False
+103 krishna vizag 2500.00 krishna@gmail.com True
+104 sachin hyd 3100.00 sachin@gmail.com False
+105 dhoni pune 3000.00  True
+106 virat hyd 2000.00 virat@gmail.com True
+107 rohith vizag 2700.00  False
+
+#ascending order
+>>> records=emp.objects.all().order_by("esal")
+>>> for rec in records:
+       print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+101 siva hyd 2000.00 siva@gmail.com True
+106 virat hyd 2000.00 virat@gmail.com True
+103 krishna vizag 2500.00 krishna@gmail.com True
+107 rohith vizag 2700.00  False
+102 rama pune 3000.00  False
+105 dhoni pune 3000.00  True
+104 sachin hyd 3100.00 sachin@gmail.com False
+
+#descending order
+>>> records=emp.objects.all().order_by("-esal")
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+104 sachin hyd 3100.00 sachin@gmail.com False
+102 rama pune 3000.00  False
+105 dhoni pune 3000.00  True
+107 rohith vizag 2700.00  False
+103 krishna vizag 2500.00 krishna@gmail.com True
+101 siva hyd 2000.00 siva@gmail.com True
+106 virat hyd 2000.00 virat@gmail.com True
+
+how to filter the objects?
+--------------------------
+	we can filter the records by using filter() objects manager.
+
+(myvenv) C:\django7am\proj16>python manage.py shell
+Python 3.10.1 
+(InteractiveConsole)
+
+>>> from app16.models import emp
+>>> records=emp.objects.all()
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+101 siva hyd 2000.00 siva@gmail.com True
+102 rama pune 3000.00  False
+103 krishna vizag 2500.00 krishna@gmail.com True
+104 sachin hyd 3100.00 sachin@gmail.com False
+105 dhoni pune 3000.00  True
+106 virat hyd 2000.00 virat@gmail.com True
+107 rohith vizag 2700.00  False
+
+
+>>> records=emp.objects.filter(esal=3000)
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+102 rama pune 3000.00  False
+105 dhoni pune 3000.00  True
+
+>>> records=emp.objects.filter(active=True)
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+101 siva hyd 2000.00 siva@gmail.com True
+103 krishna vizag 2500.00 krishna@gmail.com True
+105 dhoni pune 3000.00  True
+106 virat hyd 2000.00 virat@gmail.com True
+
+>>> records=emp.objects.filter(esal=3000,active=True)
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+105 dhoni pune 3000.00  True
+
+
+>>> records=emp.objects.filter(esal=3000,esal=2000)
+SyntaxError: keyword argument repeated: esal
+
+Django Model Field Lookup's
+----------------------------
+	the Django Model Field Lookup's are used to perform the filter operation in deep/depth.
+
+	syntax:
+	-------
+		modelField__lookupname
+
+
+(myvenv) C:\django7am\proj16>python manage.py shell
+Python 3.10.1 
+(InteractiveConsole)
+
+>>> from app16.models import emp
+>>> records=emp.objects.all()
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+101 siva hyd 2000.00 siva@gmail.com True
+102 rama pune 3000.00  False
+103 krishna vizag 2500.00 krishna@gmail.com True
+104 sachin hyd 3100.00 sachin@gmail.com False
+105 dhoni pune 3000.00  True
+106 virat hyd 2000.00 virat@gmail.com True
+107 rohith vizag 2700.00  False
+
+>>> records=emp.objects.filter(active=True)
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+101 siva hyd 2000.00 siva@gmail.com True
+103 krishna vizag 2500.00 krishna@gmail.com True
+105 dhoni pune 3000.00  True
+106 virat hyd 2000.00 virat@gmail.com True
+
+
+>>> records=emp.objects.filter(active=True,ename__endswith='a')
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+101 siva hyd 2000.00 siva@gmail.com True
+103 krishna vizag 2500.00 krishna@gmail.com True
+
+>>> records=emp.objects.filter(active=True,ename__startswith='d')
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+105 dhoni pune 3000.00  True
+
+>>> records=emp.objects.filter(active=True,ename__contains='v')
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+101 siva hyd 2000.00 siva@gmail.com True
+106 virat hyd 2000.00 virat@gmail.com True
+
+>>> records=emp.objects.filter(active=True,ename__startswith='D')
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+105 dhoni pune 3000.00  True
+
+>>> records=emp.objects.filter(active=True,esal__gte=3000)
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+105 dhoni pune 3000.00  True
+
+>>> records=emp.objects.filter(esal__gt=3000)
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+104 sachin hyd 3100.00 sachin@gmail.com False
+
+
+>>> records=emp.objects.filter(esal__gte=3000)
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+102 rama pune 3000.00  False
+104 sachin hyd 3100.00 sachin@gmail.com False
+105 dhoni pune 3000.00  True
+
+
+>>> records=emp.objects.filter(esal__lt=3000)
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+101 siva hyd 2000.00 siva@gmail.com True
+103 krishna vizag 2500.00 krishna@gmail.com True
+106 virat hyd 2000.00 virat@gmail.com True
+107 rohith vizag 2700.00  False
+
+
+>>> records=emp.objects.filter(esal__lte=3000)
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+101 siva hyd 2000.00 siva@gmail.com True
+102 rama pune 3000.00  False
+103 krishna vizag 2500.00 krishna@gmail.com True
+105 dhoni pune 3000.00  True
+106 virat hyd 2000.00 virat@gmail.com True
+107 rohith vizag 2700.00  False
+
+how to perform the complex queries on our models?
+--------------------------------------------------
+	we can perform the complex queries on our models by using 'Q'
+
+(myvenv) C:\django7am\proj16>python manage.py shell
+Python 3.10.1 
+(InteractiveConsole)
+
+>>> from app16.models import emp
+>>> from django.db.models import Q
+>>> records=emp.objects.all()
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+101 siva hyd 2000.00 siva@gmail.com True
+102 rama pune 3000.00  False
+103 krishna vizag 2500.00 krishna@gmail.com True
+104 sachin hyd 3100.00 sachin@gmail.com False
+105 dhoni pune 3000.00  True
+106 virat hyd 2000.00 virat@gmail.com True
+107 rohith vizag 2700.00  False
+
+>>> records=emp.objects.filter(Q(active=True) & Q(esal=2000))
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+101 siva hyd 2000.00 siva@gmail.com True
+106 virat hyd 2000.00 virat@gmail.com True
+
+>>> records=emp.objects.filter(Q(active=True) & Q(esal=2000) | Q(esal=3000))
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+101 siva hyd 2000.00 siva@gmail.com True
+102 rama pune 3000.00  False
+105 dhoni pune 3000.00  True
+106 virat hyd 2000.00 virat@gmail.com True
+
+>>> records=emp.objects.filter(Q(active=True) | Q(esal=2000))
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+101 siva hyd 2000.00 siva@gmail.com True
+103 krishna vizag 2500.00 krishna@gmail.com True
+105 dhoni pune 3000.00  True
+106 virat hyd 2000.00 virat@gmail.com True
+
+>>> records=emp.objects.filter(~Q(esal=2000))
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+102 rama pune 3000.00  False
+103 krishna vizag 2500.00 krishna@gmail.com True
+104 sachin hyd 3100.00 sachin@gmail.com False
+105 dhoni pune 3000.00  True
+107 rohith vizag 2700.00  False
+
+how to update the objects? (how to update the records)
+--------------------------
+	we can update the objects by using update() of objects manager.
+
+	the update() to return the output as no.of records are update
+
+
+(myvenv) C:\django7am\proj16>python manage.py shell
+Python 3.10.1 
+(InteractiveConsole)
+
+>>> from app16.models import emp
+>>> records=emp.objects.all()
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+101 siva hyd 2000.00 siva@gmail.com True
+102 rama pune 3000.00  False
+103 krishna vizag 2500.00 krishna@gmail.com True
+104 sachin hyd 3100.00 sachin@gmail.com False
+105 dhoni pune 3000.00  True
+106 virat hyd 2000.00 virat@gmail.com True
+107 rohith vizag 2700.00  False
+
+>>> emp.objects.filter(ename__endswith='a').update(esal=3500)
+3
+
+>>> records=emp.objects.all()
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+101 siva hyd 3500.00 siva@gmail.com True
+102 rama pune 3500.00  False
+103 krishna vizag 3500.00 krishna@gmail.com True
+104 sachin hyd 3100.00 sachin@gmail.com False
+105 dhoni pune 3000.00  True
+106 virat hyd 2000.00 virat@gmail.com True
+107 rohith vizag 2700.00  False
+
+>>> emp.objects.update(esal=4000)
+7
+
+>>> records=emp.objects.all()
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+101 siva hyd 4000.00 siva@gmail.com True
+102 rama pune 4000.00  False
+103 krishna vizag 4000.00 krishna@gmail.com True
+104 sachin hyd 4000.00 sachin@gmail.com False
+105 dhoni pune 4000.00  True
+106 virat hyd 4000.00 virat@gmail.com True
+107 rohith vizag 4000.00  False
+
+
+how to delete the objects? how to delete the records
+--------------------------
+	we can delete the objects by using delete() of objects manager.
+
+	the delete() to return the no.of records are deleted.
+
+
+(myvenv) C:\django7am\proj16>python manage.py shell
+Python 3.10.1 
+(InteractiveConsole)
+
+>>> from app16.models import emp
+>>> records=emp.objects.all()
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+101 siva hyd 4000.00 siva@gmail.com True
+102 rama pune 4000.00  False
+103 krishna vizag 4000.00 krishna@gmail.com True
+104 sachin hyd 4000.00 sachin@gmail.com False
+105 dhoni pune 4000.00  True
+106 virat hyd 4000.00 virat@gmail.com True
+107 rohith vizag 4000.00  False
+
+>>> emp.objects.filter(ename__startswith='s').delete()
+(2, {'app16.emp': 2})
+
+>>> records=emp.objects.all()
+>>> for rec in records:
+        print(rec.eid,rec.ename,rec.eadd,rec.esal,rec.email,rec.active)
+
+102 rama pune 4000.00  False
+103 krishna vizag 4000.00 krishna@gmail.com True
+105 dhoni pune 4000.00  True
+106 virat hyd 4000.00 virat@gmail.com True
+107 rohith vizag 4000.00  False
+
+>>> emp.objects.count()
+5
+
+>>> emp.objects.all().delete()
+(5, {'app16.emp': 5})
+
+>>> emp.objects.count()
+0

@@ -1,0 +1,163 @@
+ex: Django Normal Forms
+---
+step1:
+-----
+to create a project
+
+C:\django7am>myvenv\scripts\activate
+
+(myvenv) C:\django7am>django-admin startproject proj22
+
+step2:
+-----
+goto project location and to create an application in our project
+
+(myvenv) C:\django7am>cd proj22
+
+(myvenv) C:\django7am\proj22>python manage.py startapp app22
+
+step3:
+-----
+to install our application in the settings.py file of the project.
+
+	settings.py
+	-----------
+INSTALLED_APPS = [
+  
+    'app22'
+]
+
+step4:
+-----
+to create a templates and to set the path for our templates in the settings.py file of the project.
+
+	settings.py
+	----------
+TEMPLATES = [
+    {
+       
+        'DIRS': [BASE_DIR/'templates'],        
+    },
+]
+
+step5:
+-----
+to create a normal forms in the forms.py file of the application.
+
+	forms.py
+	---------
+from django import forms
+
+class customer(forms.Form):
+    cid=forms.IntegerField(label="Enter Customer Id:")
+    cname=forms.CharField(label="Enter Customer Name:",max_length=30)
+    cemail=forms.EmailField(label="Enter Customer Email:",
+                            widget=forms.EmailInput())
+    cpwd=forms.CharField(label="Enter Customer Password:",
+                         widget=forms.PasswordInput(),
+                         help_text="password contains atleats 8 charecters")
+
+
+step6:
+------
+to create a views in the views.py file of the application.
+
+	views.py
+	--------
+from django.shortcuts import render
+from .forms import customer
+# Create your views here.
+def cust_info(request):
+    c_obj=customer()
+    return render(request,"cust.html",{'c':c_obj})
+
+	cust.html
+	---------
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body bgcolor="red">
+<form>
+{{ c.as_p }}
+<input type="submit" value="insert">
+</form>
+</body>
+</html>
+
+step7:
+-----
+to configure the url patterns for our views in the urls.py file of the application.
+
+	urls.py
+	------
+from django.contrib import admin
+from django.urls import path
+from app22 import views
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('cinfo/',views.cust_info)
+]
+
+step8:
+-----
+to apply the migrations
+
+(myvenv) C:\django7am\proj22>python manage.py migrate
+
+step9:
+-----
+to start the server
+
+(myvenv) C:\django7am\proj22>python manage.py runserver
+
+step10:
+------
+to send the request to the server
+
+	https://127.0.0.1:8000/cinfo
+
+project structure
+------------------
+	proj22
+	   |--->app22
+	   |      |--->forms.py
+	   |      |--->views.py
+	   |--->proj22
+	   |      |--->settings.py
+	   |      |--->urls.py
+	   |--->templates
+	   |      |--->cust.html
+	   |--->manage.py
+
+note:
+----
+as_p		--> paragraph
+
+as_table	--> table
+
+as_ul		--> unordered list
+
+as_ol		--> ordered list
+		
+
+Model Forms:
+------------
+	any form is connected to model,that forms are called ModelForms.
+
+	if we want to create modelforms in that case our class is extending by ModelForm class of forms module.
+
+	syntax
+	------
+	from django import forms
+	
+	class classname(forms.ModelForm):
+		class Meta:
+		      model="modelname"
+		      fields=['field_1','field_2',....]
+                            (or)
+		      fields='__all__'
+		
+
+

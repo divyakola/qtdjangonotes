@@ -1,0 +1,373 @@
+ex:
+---
+create django project with ModelForm?
+
+step1:
+-----
+to create a project
+
+	django-admin startproject proj23
+
+step2:
+-----
+goto project location and to create an application in the project.
+
+	cd proj23
+
+	python manage.py startapp app23
+
+step3:
+-----
+to install our application in the settings.py file of the project.
+
+	settings.py
+	-----------
+INSTALLED_APPS = [
+    
+    'app23'
+]
+
+step4:
+-----
+to configure the database related settings in the settings.py file of the project.
+
+	settings.py
+	-----------
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+step5:
+-----
+to define a model in the models.py file of the application.
+
+	models.py
+	---------
+from django.db import models
+
+# Create your models here.
+class EmployeModel(models.Model):
+    eid=models.IntegerField(primary_key=True)
+    ename=models.CharField(max_length=30)
+    esal=models.DecimalField(max_digits=6,decimal_places=2)
+    edno=models.IntegerField()
+
+
+step6:
+----
+to check the errors in our model
+
+	python manage.py check
+
+step7:
+-----
+to create a model(to generate the sql query for our model)
+
+	python manage.py makemigrations
+
+step8:
+-----
+to apply the migrations(to execute the sql query for our model)
+
+	python manage.py migrate
+
+step9:
+-----
+to create a model forms in the forms.py file of the application
+
+	forms.py
+	---------
+from django import forms
+from .models import EmployeModel
+
+class EmployeForm(forms.ModelForm):
+    class Meta:
+        model=EmployeModel
+        fields="__all__"
+
+
+step10:
+-----
+to create a templates and to set the path for our templates in the settings.py file of the project.
+
+	settings.py
+	------------
+TEMPLATES = [
+    {
+        
+        'DIRS': [BASE_DIR/'templates'],        
+    },
+]
+
+step11:
+-------
+to create a views in the views.py file of the application
+
+	views.py
+	--------
+from django.shortcuts import render
+from .forms import EmployeForm
+from .models import EmployeModel
+from django.http import HttpResponse
+# Create your views here.
+def input(request):
+    emp_form=EmployeForm()
+    return render(request,'input.html',{'emp':emp_form})
+    
+def insert(request):
+    emp_form=EmployeForm(request.POST)
+    if emp_form.is_valid():
+        emp_form.save()
+        return HttpResponse("Inserted Successfully")
+
+def retrive(request):
+    data=EmployeModel.objects.all()
+    return render(request,'display.html',{'records':data})
+
+	
+	input.html
+	-----------
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body bgcolor="blue">
+<form action="insert" method="post">
+{% csrf_token %}
+{{ emp.as_p }}
+<input type="submit" value="add">
+</form>
+</body>
+</html>
+
+	display.html
+	-------------
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body bgcolor="yellow">
+<table border=5>
+<tr style="color:red">
+<th>Id</th>
+<th>Name</th>
+<th>Salary</th>
+<th>Dept.No</th>
+</tr>
+{% for rec in records %}
+   <tr style="color:blue">
+       <td>{{rec.eid}}</td>
+       <td>{{rec.ename}}</td>
+       <td>{{rec.esal}}</td>
+       <td>{{rec.edno}}</td>
+    </tr>
+{% endfor %}
+</table>
+</body>
+</html>
+
+step12:
+------
+to configure the url patterns for our views in the urls.py file of the project.
+
+	urls.py
+	-------
+from django.contrib import admin
+from django.urls import path,re_path
+from app23 import views
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('in/',views.input),
+    re_path('insert',views.insert),
+    path('result/',views.retrive)
+]
+
+step13:
+-----
+to start the server
+
+	python manage.py runserver
+
+step14:
+------
+to send the request to the server
+
+	http://127.0.0.1:8000/in
+
+	http://127.0.0.1:8000/result
+
+structure:
+-----------
+	proj23
+	   |--->app23
+	   |	  |--->models.py
+	   |	  |--->forms.py
+	   |      |--->views.py
+	   |--->proj23
+	   |      |--->settings.py
+	   |      |--->urls.py
+	   |--->templates
+	   |      |--->input.html
+	   |      |--->display.html
+	   |--->manage.py
+
+
+
+
+	Django Admin
+	-------------
+
+Admin sites are integral part of any website. 
+
+Django provides an admin app.
+
+We will create our own admin site called cadmin.
+
+We are communicating the django admin site first we need to create a superuser
+
+	we can create a superuser,by following command
+
+	python manage.py createsuperuser
+
+
+In django admin site,The Groups and Users Models under the  "Authentication and Autherization" are coming from django.contrib.auth.
+
+Django uses
+	Groups model to handle the permissions.
+	Users model refers to the users of the site.
+
+Adding our models into Django admin site:
+-----------------------------------------
+By default ,django admin app does not load any model from the apps we are created.
+
+To add a our model to the django admin site we have to modify admin.py file available inside every app.
+
+Note:
+------
+If admin.py file is not available inside the our application,just we can create a new file and called it as admin.py and then add our model into admin.py file.
+
+ex:
+---
+step1:
+-----
+create a django project
+
+	django-admin startproject proj24
+
+step2:
+-----
+goto project location and to create an application in the project
+
+	cd proj24
+
+	python manage.py startapp app24
+
+step3:
+-----
+to install our application in the settings.py file of the project
+
+	settings.py
+	-----------
+INSTALLED_APPS = [
+   
+    'app24'
+]
+
+step4:
+-----
+to configure the database related settings in the settings.py file
+
+	settings.py
+	-----------
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+step5:
+-----
+to define a model in the models.py file of the application
+
+	models.py
+	---------
+from django.db import models
+
+# Create your models here.
+class customer(models.Model):
+    cid=models.IntegerField(primary_key=True)
+    cname=models.CharField(max_length=20)
+    cadd=models.CharField(max_length=30)
+    payment=models.DecimalField(max_digits=5,decimal_places=2)
+    
+step6:
+------
+to check the errors in our model
+
+	python manage.py check
+
+step7:
+-----
+to create a model(to apply the makemigrations)
+
+	python manage.py makemigrations
+
+step8:
+-----
+to generate the tables(to apply the migrations)
+
+	python manage.py migrate
+
+step9:
+-----
+to create a superuser
+
+	python manage.py createsuperuser
+
+(myvenv) C:\django7am\proj24>python manage.py createsuperuser
+
+Username (leave blank to use 'admin'): siva
+Email address: siva@gmail.com
+Password:
+Password (again):
+The password is too similar to the username.
+This password is too short. It must contain at least 8 characters.
+Bypass password validation and create user anyway? [y/N]: y
+Superuser created successfully.
+
+step10:
+-----
+to start the server
+
+	python manage.py runserver
+
+step11:
+------
+to send the request to the server
+
+	http://127.0.0.1:8000/admin
+
+
+how to add our model in the admin site?
+----------------------------------------
+	admin.py
+	--------
+from django.contrib import admin
+from .models import customer
+# Register your models here.
+admin.site.register(customer)
+
+
+to start the server
+
+	python manage.py runserver
+
+
+to send the request to the server
+
+	http://127.0.0.1:8000/admin

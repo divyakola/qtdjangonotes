@@ -1,0 +1,149 @@
+how to start the server?
+------------------------
+	we can start the server by using runserver command.
+
+	python manage.py runserver
+
+ex:
+---
+C:\django7am>myvenv\scripts\activate
+
+(myvenv) C:\django7am>cd proj1
+
+(myvenv) C:\django7am\proj1>python manage.py runserver
+
+
+how to send the request to the server?
+-------------------------------------
+	http://127.0.0.1:8000/urlname
+
+
+how to stop the server?
+-----------------------
+	we can stop the server through the command prompt by using ctrl+c
+
+how to start the server on different port number?
+-------------------------------------------------
+	python manage.py runserver portnumber
+
+ex:
+---
+(myvenv) C:\django7am\proj1>python manage.py runserver 8888
+
+ 
+what is view?
+-------------
+	a view is a python function or class,which is used to represent the business logics.
+
+	the view take the request from the enduser/client,to process that request and give back the response to the enduser/client.
+
+	we can implement the views,in two ways
+
+	1).based on functions
+
+	2).based on classes
+
+Function Based views?
+---------------------
+	we can implement the views based on functions that type of views are called Function Based views.
+
+	whenever the enduser to send the request to the server internally our django-framework engine take that request,to verify that requet in the urls.py file.
+
+	our requested url is verfied/valid in that case one request object is created,that request object is passing to that particular view function and executeing.
+
+	in function based views,we can implement diffrent http request methods like GET(),POST(),PUT(),DELETE(),.... by using conditional statements.
+
+ex1:
+---
+create a django project to display the "hello world" on the web browser?
+
+step1:
+-----
+to create a project
+
+	django-admin startproject projectname
+
+(myvenv) C:\django7am>django-admin startproject proj2
+
+step2:
+-----
+goto project location and to create an application in the project location.
+
+	cd projname
+
+	python manage.py startapp appname
+
+(myvenv) C:\django7am>cd proj2
+
+(myvenv) C:\django7am\proj2>python manage.py startapp app2
+
+step3:
+----
+to install our application in the settings.py file of the project.
+
+	settings.py
+	-----------
+INSTALLED_APPS = [
+    
+    'app2'
+]
+
+step4:
+----
+to create a views in the views.py file of the application.
+
+	views.py
+	--------
+#from django.shortcuts import render
+from django.http import HttpResponse
+# Create your views here.
+def welcome(request):
+    return HttpResponse("hello world")
+
+step5:
+-----
+to configure the url patterns for our views in the urls.py file of the project.
+
+	urls.py
+	-------
+from django.contrib import admin
+from django.urls import path
+from app2 import views
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('wel/',views.welcome)
+]
+
+step6:
+-----
+to apply the migrations
+
+	python manage.py migrate
+
+step7:
+------
+to start the server
+
+	python manage.py runserver
+
+step8:
+-----
+to send the request to the server
+
+	http://127.0.0.1:8000/wel
+
+structure:
+----------
+	proj2
+	   |--->app2
+	   |      |--->views.py
+	   |--->proj2
+	   |      |--->settings.py
+	   |      |--->urls.py
+	   |--->manage.py
+
+
+
+
+

@@ -1,0 +1,306 @@
+whenever we are using get method,in that case internally get request object is created.
+
+the get request object store the data in the form of dictionary.
+
+the get request object is represented as "GET" variable.
+
+
+whenever we are using post method,in that case internally post request object is created.
+
+the post request object store the data in the form of dictionary.
+
+the post request object is represented as "POST" variable.
+
+what is Template?
+-----------------
+the Template is a html file,which we can include python code by using some template languages.
+
+the template language is a special-langauge which is under-standing by template engines,by using these template languages we can achive the html code reusability.
+
+the template languages are DTL(Django Template Language),Jinja2
+
+	{{ variable }}		--> template variables syntax
+
+	{% temlate tag %}	--> template tag syntax
+
+ex:
+---
+create a django project to read the data from the browser(user input),to perform the addition operation and to return the result on the webpage by using get()?
+
+step1:
+-----
+to create a project
+
+C:\django7am>myvenv\scripts\activate
+
+(myvenv) C:\django7am>django-admin startproject proj6
+
+step2:
+------
+goto project location and to create an application in our project
+
+(myvenv) C:\django7am>cd proj6
+
+(myvenv) C:\django7am\proj6>python manage.py startapp app6
+
+step3:
+-----
+to install our application in the settings.py file of the project.
+
+	settings.py
+	------------
+INSTALLED_APPS = [
+  
+    'app6'
+]
+
+step4:
+----
+to create a templates and to set the path for our templates in the settings.py file of the project.
+
+	settings.py
+	-----------
+TEMPLATES = [
+    {
+        
+        'DIRS': [BASE_DIR/'templates'],       
+    },
+]
+
+
+step5:
+----
+to create a views in the views.py file of the application.
+
+	views.py
+	--------
+from django.shortcuts import render
+from django.http import HttpResponse
+# Create your views here.
+def input(request):
+    return render(request,"input.html")
+def addition(request):
+    a=int(request.GET['fn'])
+    b=int(request.GET['sn'])
+    c=a+b
+    return HttpResponse("the sum of "+str(a)+" and "+str(b)+" is: "+str(c))
+    
+
+	input.html
+	-----------
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body bgcolor="powderblue">
+<form action="add">
+Enter First Number:
+<input type="text" name="fn"><br><br>
+Enter Second Number:
+<input type="text" name="sn"><br><br>
+<input type="submit" value="sum">
+</form>
+</body>
+</html>
+
+step6:
+-----
+to configure the url patterns for our views in the urls.py file of the project.
+
+	urls.py
+	-------
+from django.contrib import admin
+from django.urls import path,re_path
+from app6 import views
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('in/',views.input),
+    re_path('add',views.addition)
+]
+
+step7:
+-----
+to apply the migrations
+
+	python manage.py migrate
+
+step8:
+------
+to start the server
+
+	python manage.py runserver
+
+step9:
+-----
+to send the request to the server
+
+	http://127.0.0.1:8000/in
+
+structure:
+----------
+	proj6
+	   |--->app6
+	   |      |--->views.py
+	   |--->proj6
+	   |      |--->settings.py
+	   |      |--->urls.py
+	   |--->templates
+	   |      |--->input.html
+           |--->manage.py
+
+
+ex:
+---
+create a django project to read the data from the browser(user input),to perform the addition operation and to return the result on the webpage by using post()?
+
+step1:
+-----
+to create a project
+
+C:\django7am>myvenv\scripts\activate
+
+(myvenv) C:\django7am>django-admin startproject proj7
+
+step2:
+------
+goto project location and to create an application in our project
+
+(myvenv) C:\django7am>cd proj7
+
+(myvenv) C:\django7am\proj7>python manage.py startapp app7
+
+step3:
+-----
+to install our application in the settings.py file of the project.
+
+	settings.py
+	------------
+INSTALLED_APPS = [
+  
+    'app7'
+]
+
+step4:
+----
+to create a templates and to set the path for our templates in the settings.py file of the project.
+
+	settings.py
+	-----------
+TEMPLATES = [
+    {
+        
+        'DIRS': [BASE_DIR/'templates'],       
+    },
+]
+
+
+step5:
+----
+to create a views in the views.py file of the application.
+
+	views.py
+	--------
+from django.shortcuts import render
+from django.http import HttpResponse
+# Create your views here.
+def input(request):
+    return render(request,'input.html')
+
+def addition(request):
+    a=int(request.POST['fn'])
+    b=int(request.POST['sn'])
+    c=a+b
+    return HttpResponse("the sum of "+str(a)+" and "+str(b)+" is: "+str(c))
+    
+
+	input.html
+	-----------
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body bgcolor="purple">
+<form action="add" method="post">
+Enter First Number:
+<input type="text" name="fn"><br><br>
+Enter Second Number:
+<input type="text" name="sn"><br><br>
+<input type="submit" value="sum">
+</form>
+</body>
+</html>
+
+step6:
+-----
+to configure the url patterns for our views in the urls.py file of the project.
+
+	urls.py
+	-------
+from django.contrib import admin
+from django.urls import path,re_path
+from app7 import views
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('in/',views.input),
+    re_path('add',views.addition)
+]
+
+step7:
+-----
+to apply the migrations
+
+	python manage.py migrate
+
+step8:
+------
+to start the server
+
+	python manage.py runserver
+
+step9:
+-----
+to send the request to the server
+
+	http://127.0.0.1:8000/in
+
+
+Forbidden (403)
+CSRF verification failed. Request aborted.
+
+
+what is CSRF?
+--------------
+CSRF(Cross Site Request Forgery) is an attacker,we can prevent our web applications from these attacker we would use {% csrf_token %} template tag inside each POST form.
+
+
+	input.html
+	----------
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body bgcolor="purple">
+<form action="add" method="post">
+{% csrf_token %}
+Enter First Number:
+<input type="text" name="fn"><br><br>
+Enter Second Number:
+<input type="text" name="sn"><br><br>
+<input type="submit" value="sum">
+</form>
+</body>
+</html>
+
+structure:
+----------
+	proj7
+	   |--->app7
+	   |      |--->views.py
+	   |--->proj7
+	   |      |--->settings.py
+	   |      |--->urls.py
+	   |--->templates
+	   |      |--->input.html
+           |--->manage.py	

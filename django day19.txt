@@ -1,0 +1,377 @@
+ex:
+---
+create a django project with static files?
+
+step1:
+-----
+to create a project
+
+	django-admin startproject proj25
+
+step2:
+-----
+goto project location and to create an application in our project.
+
+	cd proj25
+
+	python manage.py startapp app25
+
+step3:
+------
+to install our application in the settings.py file of the project.
+
+	settings.py
+	-----------
+INSTALLED_APPS = [
+    
+    'app25'
+]
+
+step4:
+------
+to create a database in the mysql server
+
+	create database databasename;
+
+create database employe;
+
+step5:
+------
+to install mysql server related python package(especially in django we are install mysqlclient)
+
+	pip install mysqlclient
+
+step6:
+------
+to configure the database settings in the settings.py file of the project.
+
+	settings.py
+	-----------
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'employe',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',
+        'PORT': '3306'
+    }
+}
+
+step7:
+-----
+to define a model in the models.py file of the application
+
+	models.py
+	--------
+from django.db import models
+
+# Create your models here.
+class emp(models.Model):
+    eid=models.IntegerField(primary_key=True)
+    ename=models.CharField(max_length=20)
+    esal=models.DecimalField(max_digits=6,decimal_places=2)
+    edno=models.IntegerField()
+    
+
+step8:
+------
+to check the errors in our model
+
+	python manage.py check
+
+step9:
+------
+to create a model
+
+	python manage.py makemigrations
+
+step10:
+------
+to create a tables in the specified database
+
+	python manage.py migrate
+
+step11:
+------
+to create a django model forms in the forms.py file of the application.
+
+	forms.py
+	-------
+from django import forms
+from .models import emp
+#create your forms here
+class empForm(forms.ModelForm):
+    class Meta:
+        model=emp
+        fields="__all__"
+
+step12:
+------
+to create a templates and to set the path for our templates in the settings.py file of the project.
+
+	settings.py
+	-----------
+TEMPLATES = [
+    {
+        
+        'DIRS': [BASE_DIR/'templates'],        
+    },
+]
+
+step13:
+------
+to create a static files and to set the path for our static files in the settings.py file of the project.
+
+	settings.py
+	-----------
+STATIC_URL = 'static/'
+STATICFILES_DIRS=[
+    BASE_DIR/'static',
+    ]
+
+step14:
+------
+to create a views in the views.py file of the application.
+
+	views.py
+	---------
+from django.shortcuts import render
+from .forms import empForm
+from django.http import HttpResponse
+from .models import emp
+# Create your views here.
+def input(request):
+    ef=empForm()
+    return render(request,'input.html',{'eform':ef})
+def insertion(request):
+    ef=empForm(request.POST)
+    if ef.is_valid():
+        ef.save()
+        return HttpResponse("Inserted Successfully")
+def retreive(request):
+    data=emp.objects.all()
+    return render(request,'display.html',{'records':data})
+    
+        
+    	input.html
+	----------
+<!DOCTYPE html>
+<html>
+{% load static %}
+<head>
+<link rel="stylesheet" href="{% static 'css/base.css' %}">
+<script type="text/javascript" src="{% static 'js/wishes.js' %}">
+</script>
+</head>
+<body>
+<div>
+<img src="{% static 'images/Guido.jpg' %}">
+<form action="insert" method="post">
+{% csrf_token %}
+{{ eform.as_p }}
+<input type="submit" value="add">
+</form>
+</div>
+</body>
+</html>
+	
+	display.html
+	-------------
+<!DOCTYPE html>
+<html>
+{% load static %}
+<head>
+<link rel="stylesheet" href="{% static 'css/tempo.css' %}">
+</head>
+<body>
+<table class="center">
+<tr>
+<th>Eid</th>
+<th>Ename</th>
+<th>Esalary</th>
+<th>Dept.No</th>
+</tr>
+{% for rec in records %}
+<tr><th>{{rec.eid}}</th>
+    <th>{{rec.ename}}</th>
+    <th>{{rec.esal}}</th>
+    <th>{{rec.edno}}</th>
+</tr>
+{% endfor %}
+</table>
+</body>
+</html>
+
+	base.css
+	--------
+body{
+background-image:url("https://images.unsplash.com/photo-1645219944456-038cde00ae20?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHx0b3BpYy1mZWVkfDI2fGJvOGpRS1RhRTBZfHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60");
+background-repeat:no-repeat;
+background-size:cover;
+}
+
+div {
+  display:flex;
+  justify-content: center;
+}
+
+img{
+   
+   height:180px;
+   width:280px;
+ }
+
+
+	tempo.css
+	---------
+body{
+ background-image:url("https://images.unsplash.com/photo-1645161694252-90ff1c36345f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHx0b3BpYy1mZWVkfDM0fGJvOGpRS1RhRTBZfHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60");
+ background-repeat:no-repeat;
+ background-size:cover;
+}
+
+table,th,td{
+    border:2px solid red;
+    text-align:center;
+ }
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+	wishes.js
+	---------
+alert("hello world");
+
+step15:
+-------
+to configure the url patterns for our views in the urls.py file of the project.
+
+	urls.py
+	-------
+from django.contrib import admin
+from django.urls import path,re_path
+from app25 import views
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('in/',views.input),
+    re_path('insert',views.insertion),
+    path('res/',views.retreive)
+]
+
+step16:
+-------
+to start the server
+
+	python manage.py runserver
+
+step17:
+-------
+to send the request to the server
+
+	http://127.0.0.1:8000/in
+	http://127.0.0.1:8000/res
+
+structure:
+----------
+	proj25
+	   |--->app25
+	   |      |--->models.py
+	   |      |--->forms.py
+	   |      |--->views.py
+	   |--->proj25
+	   |      |--->settings.py
+	   |      |--->urls.py
+	   |--->templates
+	   |      |--->input.html
+	   |      |--->display.html
+	   |--->static
+	   |      |--->css
+	   |      |     |--->base.css
+	   |      |     |--->tempo.css
+	   |      |--->js
+           |      |     |--->wishes.js
+           |      |--->images
+           |      |      |--->Guido.jpg
+	   |--->manage.py
+
+
+			cookies and sessions
+		---------------------
+Cookies:
+---------
+	Http is a stateless protocol, when a request is send to the server it has no idea wheather you are requesting for the first time (or) you are the same person who has visited this page thousands times before.
+
+	This is a problem, to overcome this problem we are introducing "cookie".
+
+	A cookie was first implemented by a programmer named "Louis Mountulli" in the year of 1994.
+
+What is Cookie:-
+----------------
+	A cookie is a small piece of data,which is stored in the users browser which is sent by the server.
+
+	They are commonly used to store user preferrences.
+
+How to working cookie
+---------------------
+	The browser sends the request to the server, the server process that request and sends the response along with one (or) more cookies to the browser.
+
+	The browser saves the cookie received from the server.
+	
+	
+How to create a cookie:
+-----------------------
+	We can create a cookie by using the set_cookie( ) method of response object.
+
+	Syntax:- set_cookie(name,value,max-age=None)
+
+How to read the cookies:
+------------------------
+	Every request object in django has a cookie attribute which acts like a dictionary object.
+
+	We can use cookie to access cookie value by using the following syntax,it will return string format.
+ 
+	Syntax:- request.COOKIE['cookie_name']
+
+	
+How to delete a cookie:
+------------------------
+	To delete a cookie, simply call 'delete_cookie()' method of response object with the name of the cookie to delete.
+	Syntax:
+	     response.delete_cookie(cookiename)
+
+Note:
+-----	
+	With the help of cookie we can solve the problem of statelessness of http.
+
+
+Sessions:-
+----------
+	We are introducing the sessions to overcome the problems in cookies.
+
+Problems in cookies:
+--------------------
+	1. An attacker eaisly can modify contents of a cookie.
+	2. We cannot store sensitive data.
+	3. We can store limited amount of data in cookie.
+
+How to working with sessions:
+------------------------------
+	Whenever we  are using the sessions,the data is not stored directly in the browser instead of it is stored in the server.
+
+	Django creates a unique random string called session id (or) SID and associates SID with the data.
+
+	The server then sends a cookie name sesion id containing sid as value to the browser.
+
+	Sid generated by django is a 32 characters long random string , so it is almost impossible to guess by an attacker.
+
+Setting up sessions:
+--------------------
+	In django, we are implemented sessions using middleware.
+
+Open settings.py file middleware option is available,
+
+	django.contrib.session.middleware.SessionMiddleware

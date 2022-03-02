@@ -1,0 +1,303 @@
+ex:
+----
+create django project with class based views,to read the data from the user input,to perform the addition operation on that data and to display the result on the browser by using get() and post()?
+
+step1:
+-----
+to create a project
+
+C:\django7am>myvenv\scripts\activate
+
+(myvenv) C:\django7am>django-admin startproject proj11
+
+step2:
+------
+goto project location and to create an application in the project location.
+
+(myvenv) C:\django7am>cd proj11
+
+(myvenv) C:\django7am\proj11>python manage.py startapp app11
+
+step3:
+-----
+to install our application in the settings.py file of the project.
+
+	settings.py
+	-----------
+INSTALLED_APPS = [
+   
+    'app11'
+]	
+
+step4:
+-----
+to create a templates and to set the path for our templates in the settings.py file of the project.
+
+	settings.py
+	-----------
+TEMPLATES = [
+    {
+       
+        'DIRS': [BASE_DIR/'templates'],        
+    },
+]
+
+step5:
+-----
+to create a classbased views in the views.py file of the application.
+
+	views.py
+	--------
+from django.shortcuts import render
+from django.views.generic import View
+# Create your views here.
+class ginput(View):
+    def get(self,request):
+        return render(request,'ginput.html')
+class pinput(View):
+    def get(self,request):
+        return render(request,'pinput.html')
+
+class addition(View):
+    def get(self,request):
+        a=int(request.GET['fn'])
+        b=int(request.GET['sn'])
+        c=a+b
+        return render(request,'goutput.html',{'res':c})
+    def post(self,request):
+        a=int(request.POST['fn'])
+        b=int(request.POST['sn'])
+        c=a+b
+        return render(request,'poutput.html',{'res':c})
+        
+
+	ginput.html
+	-----------
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body bgcolor="powderblue">
+<form action="add">
+Enter First Number:
+<input type="text" name="fn"><br><br>
+Enter Second Number:
+<input type="text" name="sn"><br><br>
+<input type="submit" value="sum">
+</form>
+</body>
+</html>
+
+	goutput.html
+	------------
+<!DOCTYPE html>
+<html>
+</head>
+<body bgcolor="blue">
+<h1 style="color:red;font-style:italic">
+the sum is:{{res}}
+</h1>
+</body>
+</html>
+
+	pinput.html
+	-----------
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body bgcolor="blue">
+<form action="add" method="post">
+{% csrf_token %}
+Enter First Number:
+<input type="text" name="fn"><br><br>
+Enter Second Number:
+<input type="text" name="sn"><br><br>
+<input type="submit" value="sum">
+</form>
+</body>
+</html>
+
+	poutput.html
+	------------
+<!DOCTYPE html>
+<html>
+</head>
+<body bgcolor="red">
+<h1 style="color:yellow;font-family:elephant;font-style:bold">
+the sum is:{{res}}
+</h1>
+</body>
+</html>
+
+step6:
+------
+to configure the url patterns for our views in the urls.py file of the project.
+
+	urls.py
+	-------
+from django.contrib import admin
+from django.urls import path,re_path
+from app11.views import ginput,addition,pinput
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('gin/',ginput.as_view()),
+    path('pin/',pinput.as_view()),
+    re_path('add',addition.as_view())
+]
+
+step7:
+-----
+to apply the migrations
+
+	python manage.py migrate
+
+step8:
+-----
+to start the server
+
+	python manage.py runserver
+
+step9:
+-----
+to send the request to the server
+
+	http://127.0.0.1:8000/gin
+	http://127.0.0.1:8000/pin
+
+structure:
+----------
+	proj11
+	   |--->app11
+	   |	  |--->views.py
+	   |--->proj11
+	   |      |--->settings.py
+	   |      |--->urls.py
+	   |--->templates
+	   |      |--->ginput.html
+	   |      |--->goutput.html
+	   |      |--->pinput.html
+           |      |--->poutput.html
+           |--->manage.py
+
+
+ex:
+---
+create a djnago project to access the templates from outside the base directory of the project?
+
+step1:
+-----
+to create a project
+
+(myvenv) C:\django7am>django-admin startproject proj12
+
+step2:
+------
+goto project location and to create an application in the project location.
+
+(myvenv) C:\django7am>cd proj12
+
+(myvenv) C:\django7am\proj12>python manage.py startapp app12
+
+step3:
+-----
+to install our application in the settings.py file of the project.
+
+	settings.py
+	-----------
+INSTALLED_APPS = [
+    
+    'app12'
+]	
+
+step4:
+------
+to create a templates and to set the path for our templates in the settings.py file.
+
+	settings.py
+	-----------
+TEMPLATES = [
+    {
+        
+        'DIRS': [BASE_DIR/'C:\\Users\\ADMIN\\Desktop\\python7am\\templates'],      
+    },
+]
+
+step5:
+-----
+to create a views in the views.py file of the application.
+
+	views.py
+	--------
+from django.shortcuts import render
+
+# Create your views here.
+def welcome(request):
+    return render(request,'hello.html')
+
+	hello.html
+	----------
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body bgcolor="powderblue">
+<h1 style="color:red;font-style:italic">
+hello world
+</h1>
+</body>
+</html>
+
+step6:
+------
+to configure the url patterns for our views in the urls.py file of the project.
+
+	urls.py
+	-------
+from django.contrib import admin
+from django.urls import path
+from app12.views import welcome
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('wel/',welcome)
+]
+
+step7:
+-----
+to apply the migrations
+
+	python manage.py migrate
+
+step8:
+------
+to start the server
+
+	python manage.py runserver
+
+step9:
+-----
+to send the request to the server
+
+	http://127.0.0.1:8000/wel
+
+structure:
+----------
+	proj12
+	   |--->app12
+	   |      |--->views.py
+	   |--->proj12
+	   |      |--->settings.py
+	   |	  |--->urls.py
+	   |--->manage.py
+
+	
+C:\\Users\\ADMIN
+	    |-->Desktop
+		   |-->python7am
+			   |-->templates
+			          |-->hello.html
+
+
+

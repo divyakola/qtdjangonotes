@@ -1,0 +1,165 @@
+AttributeError: module 'timeapp.views' has no attribute 'morning'
+
+we can handle this error by using following options,
+
+after modify the urls.py file's
+
+scenario-1:
+
+	urls.py
+	-------
+from django.contrib import admin
+from django.urls import path
+from wishesapp.views import morning,afternoon,evening,night
+from timeapp.views import dateandtime
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('mg/',morning),
+    path('af/',afternoon),
+    path('eve/',evening),
+    path('nt/',night),
+    path('cdt/',dateandtime)
+]
+
+scenario-2:
+
+	urls.py
+	-------
+from django.contrib import admin
+from django.urls import path
+import wishesapp.views as v1
+import timeapp.views as v2
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('mg/',v1.morning),
+    path('af/',v1.afternoon),
+    path('eve/',v1.evening),
+    path('nt/',v1.night),
+    path('cdt/',v2.dateandtime)
+]
+
+scenario-3:
+-----------
+including another URL Configurations
+
+	wishesapp/urls.py
+	-----------------
+from django.urls import path
+from wishesapp import views
+
+urlpatterns=[
+    path('mg/',views.morning),
+    path('af/',views.afternoon),
+    path('eve/',views.evening),
+    path('nt/',views.night)
+    ]
+
+
+	timeapp/urls.py
+	---------------
+from django.urls import path
+from timeapp import views
+
+urlpatterns=[
+    path('cdt/',views.dateandtime)
+    ]
+
+
+	proj5/urls.py
+	-------------
+from django.contrib import admin
+from django.urls import path,include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('wishesapp/',include("wishesapp.urls")),
+    path('timeapp/',include("timeapp.urls"))   
+    
+]
+
+step6:
+------
+to apply the migratins
+	
+	python manage.py migrate
+
+step7:
+-----
+to start the server
+
+	python manage.py runserver
+
+step8:
+-----
+to send the request to the server
+
+	http://127.0.0.1:8000/timeapp/cdt
+
+	http://127.0.0.1:8000/wishesapp/mg
+	http://127.0.0.1:8000/wishesapp/af
+	http://127.0.0.1:8000/wishesapp/eve
+	http://127.0.0.1:8000/wishesapp/nt
+
+structure:
+----------
+	proj5
+	   |--->wishesapp
+	   |     |--->views.py
+	   |     |--->urls.py
+	   |--->timeapp
+	   |     |--->views.py
+	   |     |--->urls.py
+	   |--->proj5
+	   |     |--->settings.py
+	   |     |--->urls.py
+           |--->manage.py
+
+
+what is HTTP?
+-------------
+	HTTP(Hyper Text Transfer Protocol) is a web protocol,which is used to enable the communication between client and server.
+
+	we can send the request to server to create request object by using HTTPRequest class.
+
+	we can get the response from the server to create response object by using HTTPResponse class.
+
+	the different HttpRequest methods are GET(),POST(),PUT(),DELETE(),.....
+
+differencess between GET() and POST()?
+--------------------------------------
+		GET()			
+		------			
+1).the GET() is used to get the data from the server,some times to send the small ammount of data to the server.
+
+2).we can made the get request by using following options
+	to write url on the browser and press enter
+	by clicking on hyperlinks
+	by submitting the forms
+
+3).get request is a default request
+
+4).get method dont provides any security
+
+5).get method is not suitable for sending the sensitive information
+
+6).get method is not suitable for uploading the files
+
+7).in the get method,our requested query string will be appended to the url on the browser.
+
+		POST()
+		------
+1).the POST() is used to post the data(small,medium,large) to the server.
+	
+2).we can made the post request by submitting the forms only.
+
+3).we can create post request manually/explicitly
+
+4).post method to provide the security
+
+5).post method is suitable for sending the sensitive information
+
+6).post method is suitable for uploading the files
+
+7).in the post method,our requested query string will not be appended to the url on the browser.

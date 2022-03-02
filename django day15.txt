@@ -1,0 +1,278 @@
+ex:
+---
+create a django project to implement the Many-to-Many model relationship?
+
+step1:
+-----
+to create a django project
+
+C:\django7am>myvenv\scripts\activate
+
+(myvenv) C:\django7am>django-admin startproject proj20
+
+step2:
+-----
+goto project location and to creating an application in the project.
+
+(myvenv) C:\django7am>cd proj20
+
+(myvenv) C:\django7am\proj20>python manage.py startapp app20
+
+
+step3:
+-----
+to install our application in the settings.py file of the project
+
+	settings.py
+	-----------
+INSTALLED_APPS = [
+   
+    'app20'
+]
+
+step4:
+-----
+to configure the database related settings in the settings.py file of the project.
+
+	settings.py
+	-----------
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+step5:
+----
+to define a models in the models.py file of the application
+
+	models.py
+	---------
+from django.db import models
+
+# Create your models here.
+class Thief(models.Model):
+    name=models.CharField(max_length=20)
+    def __str__(self):
+        return "%s"%self.name
+class Car(models.Model):
+    cnumber=models.IntegerField(primary_key=True)    
+    cbrand=models.CharField(max_length=30)
+    ctype=models.CharField(max_length=20)
+    cthief=models.ManyToManyField(Thief)
+    def __str__(self):
+        return "cnumber:%d,cbrand:%s,ctype:%s"%(self.cnumber,self.cbrand,self.ctype)
+        
+step6:
+-----
+to check the errors in our model
+
+(myvenv) C:\django7am\proj20>python manage.py check
+
+step7:
+-----
+to create a models(to generate the sql queries for our model)
+
+(myvenv) C:\django7am\proj20>python manage.py makemigrations
+
+step8:
+------
+to generate the tables in the database
+
+(myvenv) C:\django7am\proj20>python manage.py migrate
+
+step9:
+-----
+(myvenv) C:\django7am\proj20>python manage.py shell
+Python 3.10.1 
+(InteractiveConsole)
+
+>>> from app20.models import Thief,Car
+>>> t1=Thief(name="siva")
+>>> t1.save()
+>>> t1
+<Thief: siva>
+
+>>> t2=Thief(name="rama")
+>>> t2.save()
+>>> t2
+<Thief: rama>	
+
+>>> t3=Thief(name="krishna")
+>>> t3.save()
+>>> t3
+<Thief: krishna>	
+
+>>> c1=Car(cnumber=1011,cbrand="tata",ctype="petrol")
+>>> c1.save()
+>>> c1
+<Car: cnumber:1011,cbrand:tata,ctype:petrol,cthief:app20.Thief.None>
+
+>>> c2=Car(cnumber=1012,cbrand="kia",ctype="disel")
+>>> c2.save()
+>>> c2
+<Car: cnumber:1012,cbrand:kia,ctype:disel,cthief:app20.Thief.None>
+	
+
+>>> c1.cthief.add(t1)
+>>> c1.save()
+
+>>> c2.cthief.add(t2)
+>>> c2.save()
+
+>>> c1.cthief.add(t2)
+>>> c1.save()
+
+>>> c2.cthief.add(t1,t3)
+>>> c2.save()
+
+>>> c1.cthief.all()
+<QuerySet [<Thief: siva>, <Thief: rama>]>
+
+>>> c2.cthief.all()
+<QuerySet [<Thief: siva>, <Thief: rama>, <Thief: krishna>]>
+
+>>> t1.car_set.all()
+<QuerySet [<Car: cnumber:1011,cbrand:tata,ctype:petrol,cthief:app20.Thief.None>, <Car: cnumber:1012,cbrand:kia,ctype:disel,cthief:app20.Thief.None>]>
+
+>>> t2.car_set.all()
+<QuerySet [<Car: cnumber:1012,cbrand:kia,ctype:disel,cthief:app20.Thief.None>, <Car: cnumber:1011,cbrand:tata,ctype:petrol,cthief:app20.Thief.None>]>
+
+>>> t3.car_set.all()
+<QuerySet [<Car: cnumber:1012,cbrand:kia,ctype:disel,cthief:app20.Thief.None>]	
+
+
+		Django Forms
+		------------
+we can creating forms in Django in two ways,they are
+
+	1).Normal Form's
+
+	2).Model Form's
+
+working with Normal Form's:
+---------------------------
+step1:
+-----
+to create a project
+
+(myvenv) C:\django7am>django-admin startproject proj21
+
+step2:
+-----
+goto project location and to create an application in the project location
+
+(myvenv) C:\django7am>cd proj21
+
+(myvenv) C:\django7am\proj21>python manage.py startapp app21
+
+step3:
+-----
+to install our application in the settings.py file of the project
+
+	settings.py
+	-----------
+INSTALLED_APPS = [
+       'app21'
+]
+
+step4:
+-----
+to create a templates and to set the path for our templates in the settings.py file of the project.
+
+	settings.py
+	-----------
+TEMPLATES = [
+    {
+        
+        'DIRS': [BASE_DIR/'templates'],      
+    },
+]
+
+step5:
+-----
+to create a django-normal-forms in the forms.py file of the application.
+
+	forms.py
+	--------
+from django import forms
+
+class student_form(forms.Form):
+    sid=forms.IntegerField(label="enter student id:")
+    sname=forms.CharField(label="enter student name:",max_length=30)
+    
+
+step6:
+----
+to create a views in the views.py file of the application
+
+	views.py
+	--------
+from django.shortcuts import render
+from .forms import student_form
+# Create your views here.
+def info(request):
+    std_obj=student_form()
+    return render(request,'input.html',{'std':std_obj})
+
+
+	input.html
+	----------
+<!DOCTYPE html>
+<html>
+<body bgcolor="powderblue">
+<form>
+{{ std }}
+<br>
+<input type="submit" value="insert">
+</form>
+</body>
+</html>
+
+step7:
+-----
+to configure the url patterns for our views in the urls.py file of the project
+
+	urls.py
+	-------
+from django.contrib import admin
+from django.urls import path
+from app21 import views
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('wel/',views.info)
+]
+
+step8:
+-----
+to apply the migrations
+
+	python manage.py migrate
+
+step9:
+-----
+to start the server
+
+	python manage.py runserver
+
+step10:
+-----
+to send the request to the server
+
+	https://127.0.0.1:8000/wel
+
+structure:
+---------
+	proj21
+	   |--->app21
+	   |      |--->forms.py
+	   |      |--->views.py
+           |--->proj21
+           |      |--->settings.py
+	   |      |--->urls.py
+           |--->templates
+	   |      |--->input.html
+           |--->manage.py
+

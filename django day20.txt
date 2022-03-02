@@ -1,0 +1,117 @@
+Model Inheritances:
+------------------
+in django,the model inheritances can be categorized into 3-types,they are
+
+	abstract base class inheritance
+	multi-table inheritance
+	proxy model inheritance
+
+abstract base class inheritance:
+---------------------------------
+no table for base class,only for derived classes.
+
+can't perform CRUD opertaions on base class.
+
+syntax:
+--------
+from django.db import models
+class x(models.Model):
+      f_1=models.CharField(max_length=20)
+      f_2=models.CharField(max_length=20)
+    
+      class Meta:
+	    abstract=True
+
+class y(x):
+       f_3=models.CharField(max_length=20)
+
+ex:
+---
+from django.db import models
+
+# Create your models here.
+class Company(models.Model):
+    cname=models.CharField(max_length=20)
+    cadd=models.CharField(max_length=30)
+    class Meta:
+        abstract=True
+
+class Employe(Company):
+    eid=models.IntegerField(primary_key=True)
+    ename=models.CharField(max_length=20)
+    def __str__(self):
+        return "%d %s %s %s"%(self.eid,self.ename,self.cname,self.cadd)
+
+    
+
+multi-table inheritance:
+------------------------
+to create tables for both base class and derived class.
+we can perform CRUD operations on both base and derived class
+
+syntax:
+--------
+from django.db import models
+
+# Create your models here.
+class x(models.Model):
+    f_1=models.CharField(max_length=20)
+    f_2=models.CharField(max_length=30)
+
+class y(x):
+    f_3=models.BooleanField(default=False)
+    f_4=models.BooleanField(default=False)
+
+ex:
+---
+from django.db import models
+
+# Create your models here.
+class College(models.Model):
+    cname=models.CharField(max_length=20)
+    cadd=models.CharField(max_length=30)
+    def __str__(self):
+        return "%s %s"%(self.cname,self.cadd)
+
+class Student(College):
+    sid=models.IntegerField(primary_key=True)
+    sname=models.CharField(max_length=20)
+    sadd=models.CharField(max_length=30)
+    def __str__(self):
+        return "%s %s %d %s %s"%(self.cname,self.cadd,self.sid,self.sname,self.sadd)
+
+
+proxy model inheritance:
+-----------------------
+to create tables for both base class and derived class.
+we can perform CRUD operations on both base and derived class.
+we can perform CRUD operations on one table will be copied to the another table.
+we can't create a new fields in proxy model
+
+syntax:
+-------
+from django.db import models
+
+# Create your models here.
+class x(models.Model):
+    f_1=models.CharField(max_length=20)
+    f_2=models.CharField(max_length=30)
+
+class y(x):
+    class Meta:
+	proxy=True
+        
+ex:
+---
+from django.db import models
+
+# Create your models here.
+class Customer(models.Model):
+    id=models.IntegerField(primary_key=True)
+    name=models.CharField(max_length=20)
+    add=models.CharField(max_length=30)
+    def __str__(self):
+        return "id:%s,name:%s,add:%s"%(self.id,self.name,self.add)
+class Student(Customer):
+    class Meta:
+        proxy=True

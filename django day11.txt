@@ -1,0 +1,334 @@
+Database connections:
+---------------------
+	We are connecting the particular database,we are changing the database connections in the settings.py file.
+
+	By default, the django framework to connect the sqlite3 database.
+
+SQLite3:-
+---------
+DATABASES= {
+	'default' : {
+		'ENGINE' : 'django.db.backends.sqlite3',
+		'NAME' : os.path.join(BASE_DIR,'db.sqlite3'),
+	}
+}
+
+
+MYSQL:-
+-------
+DATABASES= {
+	'default' : {
+		'ENGINE' : 'django.db.backends.mysql',
+		'NAME' : 'database_name',
+		'USER' : 'database_user',
+		'PASSWORD' : 'database_pass',
+		'HOST' : '127.0.0.1',
+		'PORT' : '3306',
+	}
+}
+
+
+Oracle:-
+---------
+DATABASES= {
+	'default' : {
+		'ENGINE' : 'django.db.backends.oracle',
+		'NAME' : 'orcl',
+		'USER' : 'scott',
+		'PASSWORD' : 'tiger',
+		'HOST' : 'localhost',
+		'PORT' : '1521',
+	}
+}
+
+
+postgresql:-
+-----------
+DATABASES= {
+	'default' : {
+		'ENGINE' : 'django.db.backends.postgresql',
+		'NAME' : 
+		'USER' : 
+		'PASSWORD' : 
+		'HOST' : 
+		'PORT' : 
+	}
+}
+
+note:
+-----
+after defineing a model next we need to check the errors in our model,after to apply the makemigrations and migrate.
+
+how to check the errors in our model class?
+-----------------------------------------
+	we can check the errors in our model class by using check command
+
+	python manage.py check
+
+what is makemigrations?
+-----------------------
+	makemigrations is a one command,which is used to generate the sql query for our model class(the database understanding only sql queries).
+
+	to create a model 
+
+	python manage.py makemigrations [appname]
+
+what is migrate?
+--------------
+	after generate sql query next we need to execute that sql query by using migrate command.
+
+	python manage.py migrate
+
+ex:
+---
+create a django project with model?
+
+step1:
+-----
+to create a project
+
+C:\django7am>myvenv\scripts\activate
+
+(myvenv) C:\django7am>django-admin startproject proj16
+
+step2:
+------
+goto project location and to create an application in the project.
+
+(myvenv) C:\django7am>cd proj16
+
+(myvenv) C:\django7am\proj16>python manage.py startapp app16
+
+
+step3:
+-----
+to install our application in the settings.py file of the project.
+
+	settings.py
+	----------
+INSTALLED_APPS = [
+   
+    'app16'
+]	
+
+step4:
+-----
+to configure the database settings in the settings.py file of the application.
+
+	settings.py
+	----------
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+step5:
+-----
+to define a model in the models.py file of the application.
+
+	models.py
+	---------
+from django.db import models
+
+# Create your models here.
+class emp(models.Model):
+    eid=models.IntegerField(primary_key=True)
+    ename=models.CharField(max_length=20)
+    eadd=models.CharField(max_length=30)
+    esal=models.DecimalField(max_digits=6,decimal_places=2)
+    email=models.EmailField(blank=True)
+    active=models.BooleanField(default=False)
+    def __str__(self):
+        return "Eid: %d,Ename: %s"%(self.eid,self.ename)
+    
+step6:
+-----
+to check the errors in our model
+
+(myvenv) C:\django7am\proj16>python manage.py check
+
+step7:
+-----
+to create a model(to generate sql query for our model)
+
+		
+(myvenv) C:\django7am\proj16>python manage.py makemigrations
+
+step8:
+-----
+to genrate the tabel's for our models in the specified database(to execute sql query for our model)
+
+(myvenv) C:\django7am\proj16>python manage.py migrate
+
+
+structure:
+---------
+	proj16
+	   |--->app16
+	   |      |--->models.py
+	   |--->proj16
+	   |      |--->settings.py
+	   |--->manage.py
+
+
+Django ORM
+-----------
+ORM(Object Relational Mapper)
+
+Django ORM provides an elegant and powerful way to interact with the databases instead of writeing an sql queries.
+
+ORM describing how to access the data,manipulate the data and store the data into the database in object oriented fashion.
+
+by using ORM,we can perform CURD operations.
+	Create
+	Update
+	Retrieval	
+	Delete
+
+How to start Django shell?
+--------------------------
+	we can start the Django shell using the "shell" command
+
+		python manage.py shell
+
+Database Access through managers:-
+---------------------------------
+Django by default adds a manager called "objects" to every model class.
+
+The objects manager helps us to interact with the databse in complicated ways.
+
+The objects manager is the most common way for Django developers to interact with the database.
+
+ex:
+---
+(myvenv) C:\django7am\proj16>python manage.py shell
+Python 3.10.1
+(InteractiveConsole)
+
+>>> from app16.models import emp
+>>> emp.objects
+<django.db.models.manager.Manager object at 0x000001F5F3C2EE60>
+>>> type(emp.objects)
+<class 'django.db.models.manager.Manager'>
+
+how to creating an objects? (inserting the records)
+---------------------------
+we can creating an object in 3-ways,they are
+
+	1).Normal way
+
+	2).by using create() of objects manager
+
+	3).by using bulk_create() of objects manager
+
+Normal Way of Object creation?
+------------------------------
+(myvenv) C:\django7am\proj16>python manage.py shell
+Python 3.10.1
+(InteractiveConsole)
+
+>>> from app16.models import emp
+>>> e1=emp(eid=101,ename="siva",eadd="hyd",esal=2000,email="siva@gmail.com",active=True)
+>>> e1.save()
+>>> e1
+<emp: Eid: 101,Ename: siva>
+
+>>> e2=emp(eid=102,ename="rama",eadd="pune",esal=3000)
+>>> e2.save()
+>>> e2
+<emp: Eid: 102,Ename: rama>
+
+>>> type(e1)
+<class 'app16.models.emp'>
+
+>>> e1.pk
+101
+>>> e2.pk
+102
+
+by using create() of objects manager
+-------------------------------------
+(myvenv) C:\django7am\proj16>python manage.py shell
+Python 3.10.1
+(InteractiveConsole)
+
+>>> from app16.models import emp
+>>> emp.objects.create(eid=103,ename="krishna",eadd="vizag",esal=2500,email="krishna@gmail.com",active=True)
+
+<emp: Eid: 103,Ename: krishna>
+
+>>> emp.objects.create(eid=104,ename="sachin",eadd="hyd",esal=3100,email="sachin@gmail.com")
+
+<emp: Eid: 104,Ename: sachin>
+
+by using bulk_create() of objects manager:
+------------------------------------------
+(myvenv) C:\django7am\proj16>python manage.py shell
+Python 3.10.1
+(InteractiveConsole)
+
+>>> from app16.models import emp
+>>> emp.objects.bulk_create([
+emp(eid=105,ename="dhoni",eadd="pune",esal=3000,active=True),
+emp(eid=106,ename="virat",eadd="hyd",esal=2000,email="virat@gmail.com",active=True),
+emp(eid=107,ename="rohith",eadd="vizag",esal=2700)])
+
+[<emp: Eid: 105,Ename: dhoni>, <emp: Eid: 106,Ename: virat>, <emp: Eid: 107,Ename: rohith>]
+
+how to Retreive the objects? (how to retreive the records)
+----------------------------
+we can retreive the objects by using all() of objects manager.
+
+the all() to return the QuerySet object.
+
+the QuerySet is similar to list object in python but the QuerySet object dont supporting negative indexing concept.
+
+ex:
+---
+(myvenv) C:\django7am\proj16>python manage.py shell
+Python 3.10.1
+(InteractiveConsole)
+
+>>> from app16.models import emp
+>>> emp.objects.all()
+
+<QuerySet [<emp: Eid: 101,Ename: siva>, <emp: Eid: 102,Ename: rama>, <emp: Eid: 103,Ename: krishna>, <emp: Eid: 104,Ename: sachin>, <emp: Eid: 105,Ename: dhoni>, <emp: Eid: 106,Ename: virat>, <emp: Eid: 107,Ename: rohith>]>
+
+>>> records=emp.objects.all()
+>>> records[0]
+<emp: Eid: 101,Ename: siva>
+
+>>> records[5]
+<emp: Eid: 106,Ename: virat>
+
+>>> records[:3]
+<QuerySet [<emp: Eid: 101,Ename: siva>, <emp: Eid: 102,Ename: rama>, <emp: Eid: 103,Ename: krishna>]>
+
+>>> records[-1]
+ValueError: Negative indexing is not supported.
+
+>>> for rec in emp.objects.all():
+         prin(rec.eid,rec.ename,rec.eadd,rec.esal,
+              rec.email,rec.active)
+
+101 siva hyd 2000.00 siva@gmail.com True
+102 rama pune 3000.00  False
+103 krishna vizag 2500.00 krishna@gmail.com True
+104 sachin hyd 3100.00 sachin@gmail.com False
+105 dhoni pune 3000.00  True
+106 virat hyd 2000.00 virat@gmail.com True
+107 rohith vizag 2700.00  False
+
+how to generate the raw sql query for our model query?
+-------------------------------------------------------
+(myvenv) C:\django7am\proj16>python manage.py shell
+Python 3.10.1
+(InteractiveConsole)
+
+>>> from app16.models import emp
+>>> print(emp.objects.all().query)
+
+SELECT "app16_emp"."eid", "app16_emp"."ename", "app16_emp"."eadd", "app16_emp"."esal", "app16_emp"."email", "app16_emp"."active" FROM "app16_emp"
+

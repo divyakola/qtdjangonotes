@@ -1,0 +1,109 @@
+How to customizing django admin site:
+---------------------------------------
+	To customize the appearance of models in Django Admin site, we can create a new class "Adminclass" which inherits from "admin.ModelAdmin" in admin.py file.
+
+ModelAdmin Attributes:
+-----------------------
+1.list_display:
+--------------
+It contains which model fields to display on the list page.
+
+It accepts a list (or) tuple of fieldnames which you want to display.
+	
+2.search_fields:
+----------------
+This attributes enables the search function on the list page.
+
+It accepts a list (or) tuple of fieldnames where you want to search.
+
+It performs a case-insensitive search.
+	
+3.ordering:
+----------
+It specifies how the list of objects should be ordered in the django admin site.
+
+It accepts a list (or) tuple of fieldnames to specify the order.
+
+	
+4.list_filter:
+--------------
+This attribute activate the filtering bar.
+
+It accepts a list(or) tuple of field names.
+
+Django provides automatically different shortcuts to filter the objects based on the type of the field.
+
+
+Ex:- Field type		Shortcuts of filter the objects
+     -------------------------------------------------	
+     DateField		        Today,
+				Past 7 days,
+				This month,
+				This year
+
+    BooleanField		All
+				Yes
+				No
+
+
+5.date_hierarchy:
+-----------------
+This attribute is specially designed to provide an intelligent date based drill-down navigation just above Action select base.
+
+It accepts a string format not a list( or) tuple.
+
+ex:
+---
+	admin.py
+	--------
+from django.contrib import admin
+from .models import customer
+# Register your models here.
+class customerAdmin(admin.ModelAdmin):
+    list_display=["cid","cname","cadd","payment"]
+    search_fields=["cid","cadd"]
+    ordering=["payment"] #ascending order based on payment
+    #ordering=["-payment"] #descending order
+    list_filter=["cadd","payment"]
+admin.site.register(customer,customerAdmin)
+
+
+working with static files?
+--------------------------
+	static files means css,javascript and images.
+
+	we can working with static files,to configure the some settings in settings.py file of the project.
+
+	settings.py
+	-----------
+after static url
+
+STATICFILES_DIRS=[
+	BASE_DIR/'static',
+    ]
+
+how to loading the static files into templates?
+----------------------------------------------
+	we can load the css files into templates,by using following syntax,
+
+	{% load static %}
+
+<link rel="stylesheet" href="{% static 'cssfilename.css' %}">
+
+
+	we can load the javascript files into templates,by using following syntax,
+
+	{% load static %}
+
+<script type="text/javascript" src="{% static 'javscriptfilename.js' %}>
+</script>
+
+	we can load the images into templates,by using following syntax,
+
+	{% load static %}
+<img src="{% static 'imagefilenamewithextension' %} />
+
+ex:
+---
+create a django project working with static files?
+
